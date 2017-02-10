@@ -1,4 +1,11 @@
 /*
+	
+	CUSTOMIZED FOR METRO.NET BY LYDIA DUGGER, FEB 10 2017
+	FOR ACCESSIBILITY IMPROVEMENTS SPECIFIC TO NEEDS OF METRO
+	-- Added fieldset and proper labeling to the pagination dots
+	-- Removed/Updated aria attrbutes
+	
+	
      _ _      _       _
  ___| (_) ___| | __  (_)___
 / __| | |/ __| |/ /  | / __|
@@ -17,14 +24,7 @@
 /* global window, document, define, jQuery, setInterval, clearInterval */
 (function(factory) {
     'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof exports !== 'undefined') {
-        module.exports = factory(require('jquery'));
-    } else {
-        factory(jQuery);
-    }
-
+	factory(jQuery);
 }(function($) {
     'use strict';
     var Slick = window.Slick || {};
@@ -495,6 +495,8 @@
             _.$dots = dot.appendTo(_.options.appendDots);
 
             _.$dots.find('li').first().addClass('slick-active');
+            
+            _.$dots.wrap('<fieldset class="slick-dotted-fieldset" aria-label="Carousel pagination" aria-controls="slick-carousel-id' + _.instanceUid + '">');
 
         }
 
@@ -524,7 +526,7 @@
             _.$slides.wrapAll('<div class="slick-track"/>').parent();
 
         _.$list = _.$slideTrack.wrap(
-            '<div aria-live="polite" class="slick-list" role="list" aria-label="carousel"/>').parent();
+            '<div id="slick-carousel-id' + _.instanceUid + '" aria-live="polite" class="slick-list" role="list" aria-label="Carousel"/>').parent();
         _.$slideTrack.css('opacity', 0);
 
         if (_.options.centerMode === true || _.options.swipeToSlide === true) {
@@ -1298,7 +1300,7 @@
 
         $(this).attr({
           'role': 'listitem',
-          'id': 'slick-slide' + _.instanceUid + i,
+          // 'id': 'slick-slide' + _.instanceUid + i,
           'aria-label': 'slide ' + (i + 1) + ' of ' + _.slideCount
         });
 
@@ -1308,17 +1310,23 @@
       if (_.$dots !== null) {
         _.$dots.attr({
           'role':'toolbar',
-          'aria-label':'carousel'
+          'aria-label':'Carousel Pagination'
         }).find('li').each(function(i) {
           var mappedSlideIndex = tabControlIndexes[i];
 
-          $(this).attr('role','presentation');
+          // $(this).attr('role','tab');
+          
+          if( slickDotGroups > 1){
+	          var ariaLabel = 'Set ' + (i + 1) + ' of ' + slickDotGroups + ', starting at slide ' + (mappedSlideIndex + 1);
+          } else{
+	          var ariaLabel = 'Slide ' + (i + 1) + ' of ' + _.slideCount;
+          }
 
           $(this).find('button').first().attr({
             'role': 'option',
             'id': 'slick-slide-control' + _.instanceUid + i,
-            'aria-controls': 'slick-slide' + _.instanceUid + mappedSlideIndex,
-            'aria-label': (i + 1) + ' of ' + _.slideCount,
+            //'aria-controls': 'slick-slide' + _.instanceUid + mappedSlideIndex,
+            'aria-label': ariaLabel,
             'aria-selected': 'false'
           });
 
